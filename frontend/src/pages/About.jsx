@@ -237,9 +237,9 @@ const About = () => (
               ))}
             </div>
 
-            <Link to="/about" className="btn-outline">
+            {/* <Link to="/about" className="btn-outline">
               Our Story
-            </Link>
+            </Link> */}
           </FadeIn>
         </div>
       </div>
