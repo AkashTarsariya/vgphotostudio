@@ -103,7 +103,7 @@ const Footer = () => {
               {["Birthday"].map((s) => (
                 <li key={s}>
                   <Link
-                    to="http://localhost:5173/portfolio/birthday"
+                    to="/portfolio/birthday"
                     className="hover:text-white transition-colors"
                   >
                     {s}
