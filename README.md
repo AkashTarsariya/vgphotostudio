@@ -55,9 +55,6 @@ npm run seed    # Creates admin user + sample data
 npm run dev     # Starts on http://localhost:5000
 ```
 
-**Default admin credentials** (after seed):
-- Email: `admin@vgphotostudio`
-- Password: `vgphotostudio`
 
 ### 2. Frontend Setup
 
@@ -81,13 +78,13 @@ npm run dev     # Starts on http://localhost:5173
 ### Backend (`backend/.env`)
 
 ```env
-MONGODB_URI=mongodb://localhost:27017/vg-photostudio
+MONGODB_URI=your_mongodb_url
 JWT_SECRET=your_secret_key
-CLIENT_URL=http://localhost:5173
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-SMTP_HOST=smtp.gmail.com
+CLIENT_URL=your_client_url
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_key
+CLOUDINARY_API_SECRET=your_secret_key
+SMTP_HOST=...
 SMTP_USER=...
 SMTP_PASS=...
 STRIPE_SECRET_KEY=sk_test_...
@@ -96,10 +93,10 @@ STRIPE_SECRET_KEY=sk_test_...
 ### Frontend (`frontend/.env`)
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=add_your_url
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
-VITE_WHATSAPP_NUMBER=919876543210
-VITE_INSTAGRAM_URL=https://instagram.com/vgphotostudio
+VITE_WHATSAPP_NUMBER=add_your_number
+VITE_INSTAGRAM_URL=add_your_instagram_url
 ```
 
 ## API Endpoints
