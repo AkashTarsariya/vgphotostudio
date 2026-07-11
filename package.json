@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "multer": "^2.2.0",
+    "react-floating-whatsapp": "^5.0.8"
+  }
+}

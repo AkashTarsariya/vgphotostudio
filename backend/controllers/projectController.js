@@ -1,0 +1,222 @@
+import Project from "../models/Project.js";
+import path from "path";
+
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+
+export const getProjects = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 9;
+  const skip = (page - 1) * limit;
+
+  const filter = { isPublished: true };
+
+  if (req.query.category) filter.category = req.query.category;
+  if (req.query.featured === "true") filter.isFeatured = true;
+  // if (req.query.search) filter.$text = { $search: req.query.search };
+  if (req.query.search) {
+    filter.$or = [
+      {
+        title: {
+          $regex: req.query.search,
+          $options: "i",
+        },
+      },
+      {
+        location: {
+          $regex: req.query.search,
+          $options: "i",
+        },
+      },
+      {
+        story: {
+          $regex: req.query.search,
+          $options: "i",
+        },
+      },
+    ];
+  }
+
+  const [projects, total] = await Promise.all([
+    Project.find(filter)
+      .populate("category", "name slug")
+      .select("-gallery")
+      .sort({ shootDate: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Project.countDocuments(filter),
+  ]);
+
+  res.json({
+    success: true,
+    data: projects,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit),
+      hasMore: page * limit < total,
+    },
+  });
+};
+
+export const getProject = async (req, res) => {
+  const query = req.params.slug
+    ? { slug: req.params.slug }
+    : { _id: req.params.id };
+
+  const project = await Project.findOne({ ...query, isPublished: true })
+    .populate("category", "name slug")
+    .populate("relatedProjects", "title slug coverImage location shootDate");
+
+  if (!project) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  }
+
+  project.views += 1;
+  await project.save();
+
+  res.json({ success: true, data: project });
+};
+
+// export const createProject = async (req, res) => {
+//   const data = { ...req.body };
+//   if (!data.slug) data.slug = slugify(data.title);
+
+//   const project = await Project.create(data);
+//   res.status(201).json({ success: true, data: project });
+// };
+
+export const createProject = async (req, res) => {
+  try {
+    const data = { ...req.body };
+
+    if (!data.slug) {
+      data.slug = slugify(data.title);
+    }
+
+    // Cover Image
+    if (req.files?.coverImage?.length > 0) {
+      data.coverImage =
+        "/uploads/cover/" + path.basename(req.files.coverImage[0].path);
+    }
+
+    // Gallery Images
+    if (req.files?.gallery?.length > 0) {
+      data.gallery = req.files.gallery.map((file) => {
+        return "/uploads/gallery/" + path.basename(file.path);
+      });
+    }
+
+    const project = await Project.create(data);
+
+    res.status(201).json({
+      success: true,
+      data: project,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// export const updateProject = async (req, res) => {
+//   const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+
+//   if (!project) {
+//     return res
+//       .status(404)
+//       .json({ success: false, message: "Project not found" });
+//   }
+
+//   res.json({ success: true, data: project });
+// };
+
+export const updateProject = async (req, res) => {
+  try {
+    const data = { ...req.body };
+
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Upload new cover image if selected
+    if (req.files?.coverImage?.length > 0) {
+      data.coverImage = "/uploads/cover/" + req.files.coverImage[0].filename;
+    } else {
+      data.coverImage = project.coverImage;
+    }
+
+    // Upload new gallery images if selected
+    if (req.files?.gallery?.length > 0) {
+      data.gallery = req.files.gallery.map(
+        (file) => "/uploads/gallery/" + file.filename,
+      );
+    } else {
+      data.gallery = project.gallery;
+    }
+
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params.id,
+      data,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    res.json({
+      success: true,
+      data: updatedProject,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteProject = async (req, res) => {
+  const project = await Project.findByIdAndDelete(req.params.id);
+
+  if (!project) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  }
+
+  res.json({ success: true, message: "Project deleted" });
+};
+
+export const getRecentProjects = async (req, res) => {
+  const ids = req.body.projectIds || [];
+  const projects = await Project.find({ _id: { $in: ids }, isPublished: true })
+    .select("title slug coverImage category location shootDate")
+    .populate("category", "name slug")
+    .limit(6);
+
+  res.json({ success: true, data: projects });
+};
