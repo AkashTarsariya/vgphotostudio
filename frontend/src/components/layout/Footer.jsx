@@ -93,7 +93,7 @@ const Footer = () => {
               {["Wedding Photography"].map((s) => (
                 <li key={s}>
                   <Link
-                    to="http://localhost:5173/portfolio/pre-wedding-shoot-in-rajasthan"
+                    to="https://vgphotostudio.vercel.app/portfolio/pre-wedding-shoot-in-rajasthan"
                     className="hover:text-white transition-colors"
                   >
                     {s}

@@ -8,7 +8,8 @@ import LazyImage from "../components/ui/LazyImage";
 import Lightbox from "../components/ui/Lightbox";
 import { GridSkeleton } from "../components/ui/Skeleton";
 import api from "../services/api";
-const API_URL = "http://localhost:5000";
+// const API_URL = "http://localhost:5000";
+const API_URL = "https://vg-photostudio-api.onrender.com";
 
 const ProjectDetail = () => {
   const { slug } = useParams();

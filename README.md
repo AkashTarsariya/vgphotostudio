@@ -4,11 +4,11 @@ A production-ready MERN stack photography portfolio and booking website for **VG
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
+| Layer    | Technologies                                                                      |
+| -------- | --------------------------------------------------------------------------------- |
 | Frontend | React 18, Vite, Tailwind CSS, Framer Motion, React Router, React Hook Form, Axios |
-| Backend | Node.js, Express, MongoDB, Mongoose, JWT, Cloudinary, Nodemailer, Stripe |
-| Features | Dark/Light mode, PWA, SEO, Admin Dashboard, Booking + Payments |
+| Backend  | Node.js, Express, MongoDB, Mongoose, JWT, Cloudinary, Nodemailer, Stripe          |
+| Features | Dark/Light mode, PWA, SEO, Admin Dashboard, Booking + Payments                    |
 
 ## Project Structure
 
@@ -55,7 +55,6 @@ npm run seed    # Creates admin user + sample data
 npm run dev     # Starts on http://localhost:5000
 ```
 
-
 ### 2. Frontend Setup
 
 ```bash
@@ -67,11 +66,11 @@ npm run dev     # Starts on http://localhost:5173
 
 ### 3. Access
 
-| URL | Description |
-|-----|-------------|
-| http://localhost:5173 | Public website |
-| http://localhost:5173/admin/login | Admin dashboard |
-| http://localhost:5000/api/health | API health check |
+| URL                               | Description      |
+| --------------------------------- | ---------------- |
+| http://localhost:5173             | Public website   |
+| http://localhost:5173/admin/login | Admin dashboard  |
+| http://localhost:5000/api/health  | API health check |
 
 ## Environment Variables
 
@@ -101,16 +100,16 @@ VITE_INSTAGRAM_URL=add_your_instagram_url
 
 ## API Endpoints
 
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/auth/login` | Public | Admin login |
-| GET | `/api/projects` | Public | List projects |
-| GET | `/api/services` | Public | List services |
-| POST | `/api/bookings` | Public | Create booking |
-| GET | `/api/bookings/availability` | Public | Check date availability |
-| POST | `/api/payments/create-checkout` | Public | Stripe checkout |
-| GET | `/api/analytics` | Admin | Dashboard stats |
-| POST | `/api/upload/single` | Admin | Upload image |
+| Method | Endpoint                        | Access | Description             |
+| ------ | ------------------------------- | ------ | ----------------------- |
+| POST   | `/api/auth/login`               | Public | Admin login             |
+| GET    | `/api/projects`                 | Public | List projects           |
+| GET    | `/api/services`                 | Public | List services           |
+| POST   | `/api/bookings`                 | Public | Create booking          |
+| GET    | `/api/bookings/availability`    | Public | Check date availability |
+| POST   | `/api/payments/create-checkout` | Public | Stripe checkout         |
+| GET    | `/api/analytics`                | Admin  | Dashboard stats         |
+| POST   | `/api/upload/single`            | Admin  | Upload image            |
 
 ## Deployment
 
