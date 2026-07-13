@@ -9,7 +9,7 @@ import { GridSkeleton } from "../components/ui/Skeleton";
 import api from "../services/api";
 
 // const API_URL = "http://localhost:5000";
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 const API_URL = "https://vg-photostudio-api.onrender.com";
 
 const getImageUrl = (image) => {
