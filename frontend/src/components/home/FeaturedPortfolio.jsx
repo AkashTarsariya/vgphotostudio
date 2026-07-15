@@ -44,7 +44,8 @@ const FeaturedPortfolio = () => {
                 >
                   <LazyImage
                     // src={project.coverImage}
-                    src={`http://localhost:5000${project.coverImage}`}
+                    {/* src={`http://localhost:5000${project.coverImage}`} */}
+                    src={`https://vg-photostudio-api.onrender.com${project.coverImage}`}
                     alt={project.title}
                     className="aspect-[5/7]"
                   />
