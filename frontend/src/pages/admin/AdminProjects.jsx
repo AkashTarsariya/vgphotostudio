@@ -358,7 +358,8 @@ const AdminProjects = () => {
             className="flex items-center gap-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4"
           >
             <img
-              src={`http://localhost:5000${p.coverImage}`}
+              // src={`http://localhost:5000${p.coverImage}`}
+              src={`${import.meta.env.VITE_API_URL}${project.coverImage}`}
               alt={p.title}
               className="w-16 h-16 object-cover"
             />
