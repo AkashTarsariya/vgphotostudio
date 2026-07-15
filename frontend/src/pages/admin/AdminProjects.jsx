@@ -359,7 +359,7 @@ const AdminProjects = () => {
           >
             <img
               // src={`http://localhost:5000${p.coverImage}`}
-              src={`${import.meta.env.VITE_API_URL}${project.coverImage}`}
+              src={`${import.meta.env.VITE_API_URL}${p.coverImage}`}
               alt={p.title}
               className="w-16 h-16 object-cover"
             />
