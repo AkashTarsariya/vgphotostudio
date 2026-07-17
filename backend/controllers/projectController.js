@@ -1,6 +1,7 @@
 import Project from "../models/Project.js";
 // import path from "path";
 import { uploadToCloudinary } from "./uploadController.js";
+import cloudinary from "../config/cloudinary.js";
 
 const slugify = (text) =>
   text
@@ -180,6 +181,10 @@ export const updateProject = async (req, res) => {
   try {
     const data = { ...req.body };
 
+    if (data.title && !data.slug) {
+      data.slug = slugify(data.title);
+    }
+
     const project = await Project.findById(req.params.id);
 
     if (!project) {
@@ -197,24 +202,55 @@ export const updateProject = async (req, res) => {
     // }
 
     // Upload new cover image if selected
+    // if (req.files?.coverImage?.length > 0) {
+    //   const coverUpload = await uploadToCloudinary(
+    //     req.files.coverImage[0].buffer,
+    //     "vg-photostudio/cover",
+    //   );
+
+    //   data.coverImage = coverUpload.secure_url;
+    // } else {
+    //   data.coverImage = project.coverImage;
+    // }
+
     if (req.files?.coverImage?.length > 0) {
+      // TODO: Old Cloudinary image delete karishu (next step)
       const coverUpload = await uploadToCloudinary(
         req.files.coverImage[0].buffer,
         "vg-photostudio/cover",
       );
 
-      data.coverImage = coverUpload.secure_url;
+      data.coverImage = {
+        url: coverUpload.secure_url,
+        publicId: coverUpload.public_id,
+      };
     } else {
       data.coverImage = project.coverImage;
     }
 
     // Upload new gallery images if selected
+    // if (req.files?.gallery?.length > 0) {
+    //   data.gallery = req.files.gallery.map(
+    //     (file) => "/uploads/gallery/" + file.filename,
+    //   );
+    // } else {
+    //   data.gallery = project.gallery;
+    // }
+
+    data.gallery = [...project.gallery];
+
     if (req.files?.gallery?.length > 0) {
-      data.gallery = req.files.gallery.map(
-        (file) => "/uploads/gallery/" + file.filename,
-      );
-    } else {
-      data.gallery = project.gallery;
+      for (const file of req.files.gallery) {
+        const upload = await uploadToCloudinary(
+          file.buffer,
+          "vg-photostudio/gallery",
+        );
+
+        data.gallery.push({
+          url: upload.secure_url,
+          publicId: upload.public_id,
+        });
+      }
     }
 
     const updatedProject = await Project.findByIdAndUpdate(
@@ -240,16 +276,68 @@ export const updateProject = async (req, res) => {
   }
 };
 
+// export const deleteProject = async (req, res) => {
+//   const project = await Project.findByIdAndDelete(req.params.id);
+
+//   if (!project) {
+//     return res
+//       .status(404)
+//       .json({ success: false, message: "Project not found" });
+//   }
+
+//   res.json({ success: true, message: "Project deleted" });
+// };
+
 export const deleteProject = async (req, res) => {
-  const project = await Project.findByIdAndDelete(req.params.id);
+  try {
+    const project = await Project.findById(req.params.id);
 
-  if (!project) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Project not found" });
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Delete cover image
+    if (project.coverImage?.publicId) {
+      await cloudinary.uploader.destroy(project.coverImage.publicId);
+    }
+
+    // Delete gallery images
+    if (project.gallery?.length) {
+      await Promise.all(
+        project.gallery.map((image) =>
+          cloudinary.uploader.destroy(image.publicId),
+        ),
+      );
+    }
+
+    // Future: Delete videos
+    if (project.videos?.length) {
+      await Promise.all(
+        project.videos.map((video) =>
+          cloudinary.uploader.destroy(video.publicId, {
+            resource_type: "video",
+          }),
+        ),
+      );
+    }
+
+    await project.deleteOne();
+
+    res.json({
+      success: true,
+      message: "Project deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-
-  res.json({ success: true, message: "Project deleted" });
 };
 
 export const getRecentProjects = async (req, res) => {

@@ -8,6 +8,7 @@ import LazyImage from "../components/ui/LazyImage";
 import Lightbox from "../components/ui/Lightbox";
 import { GridSkeleton } from "../components/ui/Skeleton";
 import api from "../services/api";
+
 // const API_URL = "http://localhost:5000";
 const API_URL = "https://vg-photostudio-api.onrender.com";
 
@@ -64,10 +65,15 @@ const ProjectDetail = () => {
   //   ? project.gallery
   //   : [project.coverImage];
 
+  // const gallery =
+  //   project.gallery?.length > 0
+  //     ? project.gallery.map((img) => `${API_URL}${img}`)
+  //     : [`${API_URL}${project.coverImage}`];
+
   const gallery =
     project.gallery?.length > 0
-      ? project.gallery.map((img) => `${API_URL}${img}`)
-      : [`${API_URL}${project.coverImage}`];
+      ? project.gallery.map((img) => img.url)
+      : [project.coverImage?.url];
 
   return (
     <>
@@ -84,7 +90,8 @@ const ProjectDetail = () => {
         description={
           project.seo?.metaDescription || project.story?.slice(0, 160)
         }
-        image={`${API_URL}${project.coverImage}`}
+        // image={`${API_URL}${project.coverImage}`}
+        image={project.coverImage?.url}
       />
 
       <section className="relative h-[70vh] min-h-[500px]">
@@ -95,7 +102,8 @@ const ProjectDetail = () => {
         /> */}
 
         <img
-          src={`${API_URL}${project.coverImage}`}
+          // src={`${API_URL}${project.coverImage}`}
+          src={project.coverImage?.url}
           alt={project.title}
           className="w-full h-full object-cover"
         />
@@ -221,7 +229,8 @@ const ProjectDetail = () => {
                 >
                   <LazyImage
                     // src={rp.coverImage}
-                    src={`${API_URL}${rp.coverImage}`}
+                    // src={`${API_URL}${rp.coverImage}`}
+                    src={rp.coverImage?.url}
                     alt={rp.title}
                     className="aspect-[4/5] mb-3"
                   />

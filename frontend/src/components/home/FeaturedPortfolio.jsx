@@ -4,6 +4,7 @@ import { FadeIn } from "../ui/Animations";
 import LazyImage from "../ui/LazyImage";
 import { GridSkeleton } from "../ui/Skeleton";
 import api from "../../services/api";
+import { getImageUrl } from "../utils/media";
 
 const FeaturedPortfolio = () => {
   const [projects, setProjects] = useState([]);

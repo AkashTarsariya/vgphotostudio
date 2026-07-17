@@ -10,16 +10,36 @@ import api from "../services/api";
 
 const API_URL = "https://vg-photostudio-api.onrender.com";
 
+// const getImageUrl = (image) => {
+//   if (!image) return "";
+
+//   // External URL (Unsplash, etc.)
+//   if (image.startsWith("http")) {
+//     return image;
+//   }
+
+//   // Local uploaded image
+//   return `${API_URL}${image}`;
+// };
+
 const getImageUrl = (image) => {
   if (!image) return "";
 
-  // External URL (Unsplash, etc.)
-  if (image.startsWith("http")) {
-    return image;
+  // New Cloudinary schema
+  if (typeof image === "object" && image.url) {
+    return image.url;
   }
 
-  // Local uploaded image
-  return `${API_URL}${image}`;
+  // Old schema compatibility
+  if (typeof image === "string") {
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image}`;
+  }
+
+  return "";
 };
 
 const Portfolio = () => {

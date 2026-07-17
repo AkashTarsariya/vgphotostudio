@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Plus, Trash2, Edit } from "lucide-react";
 import api from "../../services/api";
+import { getImageUrl } from "../../utils/media";
 
 const AdminProjects = () => {
   const [projects, setProjects] = useState([]);
