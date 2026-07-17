@@ -39,9 +39,26 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(compression());
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(limiter);
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_URL || "https://vgphotostudio.vercel.app",
+//     credentials: true,
+//   }),
+// );
+const allowedOrigins = (
+  process.env.CLIENT_URL ||
+  "http://localhost:5173,https://vgphotostudio.vercel.app"
+).split(",");
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://vgphotostudio.vercel.app",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );

@@ -1,5 +1,6 @@
 import Project from "../models/Project.js";
-import path from "path";
+// import path from "path";
+import { uploadToCloudinary } from "./uploadController.js";
 
 const slugify = (text) =>
   text
@@ -105,15 +106,43 @@ export const createProject = async (req, res) => {
 
     // Cover Image
     if (req.files?.coverImage?.length > 0) {
-      data.coverImage =
-        "/uploads/cover/" + path.basename(req.files.coverImage[0].path);
+      // data.coverImage =
+      //   "/uploads/cover/" + path.basename(req.files.coverImage[0].path);
+      const coverUpload = await uploadToCloudinary(
+        req.files.coverImage[0].buffer,
+        "vg-photostudio/cover",
+      );
+
+      // data.coverImage = coverUpload.secure_url;
+      data.coverImage = {
+        url: coverUpload.secure_url,
+        publicId: coverUpload.public_id,
+      };
     }
 
     // Gallery Images
+    // if (req.files?.gallery?.length > 0) {
+    //   data.gallery = req.files.gallery.map((file) => {
+    //     return "/uploads/gallery/" + path.basename(file.path);
+    //   });
+    // }
+
+    // Gallery Images
     if (req.files?.gallery?.length > 0) {
-      data.gallery = req.files.gallery.map((file) => {
-        return "/uploads/gallery/" + path.basename(file.path);
-      });
+      data.gallery = [];
+
+      for (const file of req.files.gallery) {
+        const upload = await uploadToCloudinary(
+          file.buffer,
+          "vg-photostudio/gallery",
+        );
+
+        // data.gallery.push(upload.secure_url);
+        data.gallery.push({
+          url: upload.secure_url,
+          publicId: upload.public_id,
+        });
+      }
     }
 
     const project = await Project.create(data);
@@ -161,8 +190,20 @@ export const updateProject = async (req, res) => {
     }
 
     // Upload new cover image if selected
+    // if (req.files?.coverImage?.length > 0) {
+    //   data.coverImage = "/uploads/cover/" + req.files.coverImage[0].filename;
+    // } else {
+    //   data.coverImage = project.coverImage;
+    // }
+
+    // Upload new cover image if selected
     if (req.files?.coverImage?.length > 0) {
-      data.coverImage = "/uploads/cover/" + req.files.coverImage[0].filename;
+      const coverUpload = await uploadToCloudinary(
+        req.files.coverImage[0].buffer,
+        "vg-photostudio/cover",
+      );
+
+      data.coverImage = coverUpload.secure_url;
     } else {
       data.coverImage = project.coverImage;
     }

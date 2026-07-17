@@ -18,7 +18,8 @@ export const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 },
 });
 
-const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
+// const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
+export const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
