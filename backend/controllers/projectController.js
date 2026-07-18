@@ -426,6 +426,71 @@ export const deleteProject = async (req, res) => {
   }
 };
 
+export const deleteGalleryImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publicId } = req.body;
+
+    if (!publicId) {
+      return res.status(400).json({
+        success: false,
+        message: "Image publicId is required",
+      });
+    }
+
+    const project = await Project.findById(id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Find image in gallery
+    const imageExists = project.gallery.find(
+      (image) => image.publicId === publicId,
+    );
+
+    if (!imageExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Gallery image not found",
+      });
+    }
+
+    // Delete from Cloudinary
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    if (result.result !== "ok") {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to delete image from Cloudinary",
+      });
+    }
+
+    // Remove from MongoDB
+    project.gallery = project.gallery.filter(
+      (image) => image.publicId !== publicId,
+    );
+
+    await project.save();
+
+    res.json({
+      success: true,
+      message: "Gallery image deleted successfully",
+      data: project,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const getRecentProjects = async (req, res) => {
   const ids = req.body.projectIds || [];
   const projects = await Project.find({ _id: { $in: ids }, isPublished: true })

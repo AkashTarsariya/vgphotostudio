@@ -6,6 +6,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  deleteGalleryImage,
   getRecentProjects,
 } from "../controllers/projectController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
@@ -52,6 +53,9 @@ router.put(
   ]),
   updateProject,
 );
+
+router.delete("/:id/gallery", protect, adminOnly, deleteGalleryImage);
+
 router.delete("/:id", protect, adminOnly, deleteProject);
 
 export default router;

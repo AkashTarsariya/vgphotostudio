@@ -174,17 +174,53 @@ const AdminProjects = () => {
   //   }
   // };
 
-  const handleEdit = (project) => {
-    setEditing(project._id);
-    setShowForm(true);
-    Object.entries(project).forEach(([key, val]) => {
-      if (key === "gallery") setValue(key, val?.join("\n") || "");
-      else if (key === "category") setValue(key, val._id || val);
-      else if (key === "shootDate")
-        setValue(key, new Date(val).toISOString().split("T")[0]);
-      else if (typeof val === "boolean") setValue(key, String(val));
-      else if (typeof val !== "object") setValue(key, val);
-    });
+  // const handleEdit = (project) => {
+  //   setEditing(project._id);
+  //   setShowForm(true);
+  //   Object.entries(project).forEach(([key, val]) => {
+  //     if (key === "gallery") setValue(key, val?.join("\n") || "");
+  //     else if (key === "category") setValue(key, val._id || val);
+  //     else if (key === "shootDate")
+  //       setValue(key, new Date(val).toISOString().split("T")[0]);
+  //     else if (typeof val === "boolean") setValue(key, String(val));
+  //     else if (typeof val !== "object") setValue(key, val);
+  //   });
+  // };
+
+  const handleEdit = async (project) => {
+    try {
+      const { data } = await api.get(`/projects/${project._id}`);
+
+      const fullProject = data.data;
+
+      setEditing(fullProject._id);
+      setShowForm(true);
+
+      Object.entries(fullProject).forEach(([key, val]) => {
+        if (key === "category") {
+          setValue(key, val?._id || val);
+        } else if (key === "shootDate") {
+          setValue(key, new Date(val).toISOString().split("T")[0]);
+        } else if (typeof val === "boolean") {
+          setValue(key, String(val));
+        } else if (
+          key !== "gallery" &&
+          key !== "coverImage" &&
+          typeof val !== "object"
+        ) {
+          setValue(key, val);
+        }
+      });
+
+      // Existing Cover Preview
+      setCoverPreview(getImageUrl(fullProject.coverImage));
+
+      // Existing Gallery Preview
+      setGalleryPreview(fullProject.gallery || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load project");
+    }
   };
 
   const handleDelete = async (id) => {
@@ -318,7 +354,8 @@ const AdminProjects = () => {
               {galleryPreview.map((img, i) => (
                 <img
                   key={i}
-                  src={img}
+                  // src={img}
+                  src={typeof img === "string" ? img : getImageUrl(img)}
                   className="w-full h-24 rounded object-cover"
                 />
               ))}
