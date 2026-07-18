@@ -311,29 +311,58 @@ export const deleteProject = async (req, res) => {
       });
     }
 
+    // // Delete cover image
+    // if (project.coverImage?.publicId) {
+    //   await cloudinary.uploader.destroy(project.coverImage.publicId);
+    // }
+
+    // // Delete gallery images
+    // if (project.gallery?.length) {
+    //   await Promise.all(
+    //     project.gallery.map((image) =>
+    //       cloudinary.uploader.destroy(image.publicId),
+    //     ),
+    //   );
+    // }
+
+    // // Future: Delete videos
+    // if (project.videos?.length) {
+    //   await Promise.all(
+    //     project.videos.map((video) =>
+    //       cloudinary.uploader.destroy(video.publicId, {
+    //         resource_type: "video",
+    //       }),
+    //     ),
+    //   );
+    // }
+
     // Delete cover image
     if (project.coverImage?.publicId) {
-      await cloudinary.uploader.destroy(project.coverImage.publicId);
+      const result = await cloudinary.uploader.destroy(
+        project.coverImage.publicId,
+      );
+
+      console.log("Cover Delete Result:", result);
     }
 
     // Delete gallery images
     if (project.gallery?.length) {
-      await Promise.all(
-        project.gallery.map((image) =>
-          cloudinary.uploader.destroy(image.publicId),
-        ),
-      );
+      for (const image of project.gallery) {
+        const result = await cloudinary.uploader.destroy(image.publicId);
+
+        console.log("Gallery Delete Result:", result);
+      }
     }
 
-    // Future: Delete videos
+    // Future videos
     if (project.videos?.length) {
-      await Promise.all(
-        project.videos.map((video) =>
-          cloudinary.uploader.destroy(video.publicId, {
-            resource_type: "video",
-          }),
-        ),
-      );
+      for (const video of project.videos) {
+        const result = await cloudinary.uploader.destroy(video.publicId, {
+          resource_type: "video",
+        });
+
+        console.log("Video Delete Result:", result);
+      }
     }
 
     await project.deleteOne();
