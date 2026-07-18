@@ -121,8 +121,6 @@ const AdminProjects = () => {
     }
   };
 
-  const [deletingImage, setDeletingImage] = useState("");
-
   // const onSubmit = async (data) => {
   //   try {
   //     setUploading(true);
@@ -389,21 +387,21 @@ const AdminProjects = () => {
                 />
               ))} */}
 
-              <div className="grid grid-cols-4 gap-2 mt-4">
-                {galleryPreview.map((img, i) => (
-                  <div key={img.publicId || i} className="relative group">
-                    <img
-                      src={typeof img === "string" ? img : getImageUrl(img)}
-                      className="w-full h-24 rounded object-cover"
-                      alt=""
-                    />
+              {/* <div className="grid grid-cols-4 gap-2 mt-4"> */}
+              {galleryPreview.map((img, i) => (
+                <div key={img.publicId || i} className="relative group">
+                  <img
+                    src={typeof img === "string" ? img : getImageUrl(img)}
+                    className="w-full h-24 rounded object-cover"
+                    alt=""
+                  />
 
-                    {img.publicId && (
-                      <button
-                        type="button"
-                        onClick={() => handleGalleryDelete(img.publicId)}
-                        disabled={deletingImage === img.publicId}
-                        className="
+                  {img.publicId && (
+                    <button
+                      type="button"
+                      onClick={() => handleGalleryDelete(img.publicId)}
+                      disabled={deletingImage === img.publicId}
+                      className="
             absolute
             top-2
             right-2
@@ -416,17 +414,17 @@ const AdminProjects = () => {
             transition
             disabled:opacity-60
           "
-                      >
-                        {deletingImage === img.publicId ? (
-                          <span className="text-xs">...</span>
-                        ) : (
-                          <Trash2 size={14} />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    >
+                      {deletingImage === img.publicId ? (
+                        <span className="text-xs">...</span>
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
+                    </button>
+                  )}
+                </div>
+              ))}
+              {/* </div> */}
             </div>
           </div>
           <div className="flex gap-4">
