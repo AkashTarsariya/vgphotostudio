@@ -7,6 +7,7 @@ import {
   updateProject,
   deleteProject,
   deleteGalleryImage,
+  deleteVideo,
   getRecentProjects,
 } from "../controllers/projectController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
@@ -33,6 +34,10 @@ router.post(
       name: "gallery",
       maxCount: 50,
     },
+    {
+      name: "videos",
+      maxCount: 10,
+    },
   ]),
   createProject,
 );
@@ -50,11 +55,17 @@ router.put(
       name: "gallery",
       maxCount: 50,
     },
+    {
+      name: "videos",
+      maxCount: 10,
+    },
   ]),
   updateProject,
 );
 
 router.delete("/:id/gallery", protect, adminOnly, deleteGalleryImage);
+
+router.delete("/:id/video", protect, adminOnly, deleteVideo);
 
 router.delete("/:id", protect, adminOnly, deleteProject);
 

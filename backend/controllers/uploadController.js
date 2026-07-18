@@ -2,7 +2,6 @@ import multer from "multer";
 import { Readable } from "stream";
 import cloudinary from "../config/cloudinary.js";
 
-
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -20,7 +19,12 @@ export const upload = multer({
 });
 
 // const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
-export const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
+// export const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
+export const uploadToCloudinary = (
+  buffer,
+  folder = "vg-photostudio",
+  resourceType = "image",
+) =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {

@@ -12,8 +12,10 @@ const AdminProjects = () => {
   const [editing, setEditing] = useState(null);
   const [coverPreview, setCoverPreview] = useState("");
   const [galleryPreview, setGalleryPreview] = useState([]);
+  const [videoPreview, setVideoPreview] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [deletingImage, setDeletingImage] = useState("");
+  const [deletingVideo, setDeletingVideo] = useState("");
   const { register, handleSubmit, reset, setValue } = useForm();
 
   const fetchData = async () => {
@@ -83,6 +85,13 @@ const AdminProjects = () => {
       if (data.gallery?.length) {
         Array.from(data.gallery).forEach((file) => {
           formData.append("gallery", file);
+        });
+      }
+
+      // Videos
+      if (data.videos?.length) {
+        Array.from(data.videos).forEach((file) => {
+          formData.append("videos", file);
         });
       }
 
@@ -218,6 +227,9 @@ const AdminProjects = () => {
 
       // Existing Gallery Preview
       setGalleryPreview(fullProject.gallery || []);
+
+      // Existing Videos Preview
+      setVideoPreview(fullProject.videos || []);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load project");
@@ -254,6 +266,30 @@ const AdminProjects = () => {
       );
     } finally {
       setDeletingImage("");
+    }
+  };
+
+  const handleVideoDelete = async (publicId) => {
+    if (!confirm("Are you sure you want to delete this video?")) return;
+
+    try {
+      setDeletingVideo(publicId);
+
+      await api.delete(`/projects/${editing}/video`, {
+        data: { publicId },
+      });
+
+      setVideoPreview((prev) =>
+        prev.filter((video) => video.publicId !== publicId),
+      );
+
+      toast.success("Video deleted successfully");
+    } catch (err) {
+      console.error(err);
+
+      toast.error(err.response?.data?.message || "Failed to delete video");
+    } finally {
+      setDeletingVideo("");
     }
   };
 
@@ -427,6 +463,110 @@ const AdminProjects = () => {
               {/* </div> */}
             </div>
           </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Videos
+            </label>
+
+            <input
+              type="file"
+              multiple
+              accept="video/mp4,video/webm,video/quicktime"
+              className="block w-full text-sm text-gray-700
+    file:mr-4
+    file:py-2
+    file:px-4
+    file:rounded-lg
+    file:border-0
+    file:bg-amber-100
+    file:text-amber-700
+    hover:file:bg-amber-200"
+              onChange={(e) => {
+                const files = Array.from(e.target.files);
+
+                setVideoPreview(
+                  files.map((file) => ({
+                    url: URL.createObjectURL(file),
+                  })),
+                );
+              }}
+              {...register("videos")}
+            />
+
+            {/* <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+              {videoPreview.map((video, index) => (
+                // <video
+                //   key={video.publicId || index}
+                //   src={video.url || video}
+                //   controls
+                //   className="w-full h-40 rounded-lg object-cover"
+                // />
+                <video
+                  key={video.publicId || index}
+                  src={typeof video === "string" ? video : video.url}
+                  controls
+                  className="w-full h-40 rounded-lg object-cover"
+                />
+              ))}
+            </div> */}
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+              {videoPreview.map((video, index) => (
+                <div key={video.publicId || index} className="relative group">
+                  <video
+                    src={typeof video === "string" ? video : video.url}
+                    controls
+                    className="w-full h-40 rounded-lg object-cover"
+                  />
+
+                  {video.publicId && (
+                    <button
+                      type="button"
+                      onClick={() => handleVideoDelete(video.publicId)}
+                      disabled={deletingVideo === video.publicId}
+                      className="
+            absolute
+            top-2
+            right-2
+            bg-red-600
+            text-white
+            rounded-full
+            p-2
+            opacity-0
+            group-hover:opacity-100
+            transition
+            disabled:opacity-60
+          "
+                    >
+                      {deletingVideo === video.publicId ? (
+                        <span className="text-xs">...</span>
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-gray-500">
+              Supported formats: MP4, MOV, WEBM (Maximum 10 videos)
+            </p>
+          </div>
+
+          {/* <div>
+            <label className="block text-sm font-medium mb-2">Videos</label>
+
+            <input
+              type="file"
+              multiple
+              accept="video/mp4,video/quicktime,video/webm"
+              className="input-field"
+              {...register("videos")}
+            />
+          </div> */}
+
           <div className="flex gap-4">
             <select className="input-field w-auto" {...register("isPublished")}>
               <option value="true">Published</option>

@@ -146,6 +146,26 @@ export const createProject = async (req, res) => {
       }
     }
 
+    // Videos
+    if (req.files?.videos?.length > 0) {
+      data.videos = [];
+
+      for (const file of req.files.videos) {
+        const upload = await uploadToCloudinary(
+          file.buffer,
+          "vg-photostudio/videos",
+          "video",
+        );
+
+        data.videos.push({
+          url: upload.secure_url,
+          publicId: upload.public_id,
+          duration: upload.duration,
+          format: upload.format,
+        });
+      }
+    }
+
     console.log("========== CREATE PROJECT DATA ==========");
     console.dir(data, { depth: null });
 
@@ -270,6 +290,27 @@ export const updateProject = async (req, res) => {
     // }
 
     data.gallery = [...project.gallery];
+
+    // Preserve existing videos
+    data.videos = [...(project.videos || [])];
+
+    // Upload new videos if selected
+    if (req.files?.videos?.length > 0) {
+      for (const file of req.files.videos) {
+        const upload = await uploadToCloudinary(
+          file.buffer,
+          "vg-photostudio/videos",
+          "video",
+        );
+
+        data.videos.push({
+          url: upload.secure_url,
+          publicId: upload.public_id,
+          duration: upload.duration,
+          format: upload.format,
+        });
+      }
+    }
 
     if (req.files?.gallery?.length > 0) {
       for (const file of req.files.gallery) {
@@ -479,6 +520,70 @@ export const deleteGalleryImage = async (req, res) => {
     res.json({
       success: true,
       message: "Gallery image deleted successfully",
+      data: project,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteVideo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publicId } = req.body;
+
+    if (!publicId) {
+      return res.status(400).json({
+        success: false,
+        message: "Video publicId is required",
+      });
+    }
+
+    const project = await Project.findById(id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    const videoExists = project.videos.find(
+      (video) => video.publicId === publicId,
+    );
+
+    if (!videoExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "video",
+    });
+
+    if (result.result !== "ok") {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to delete video from Cloudinary",
+      });
+    }
+
+    project.videos = project.videos.filter(
+      (video) => video.publicId !== publicId,
+    );
+
+    await project.save();
+
+    res.json({
+      success: true,
+      message: "Video deleted successfully",
       data: project,
     });
   } catch (error) {
