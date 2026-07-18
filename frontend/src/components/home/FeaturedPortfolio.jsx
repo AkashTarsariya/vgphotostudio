@@ -4,7 +4,7 @@ import { FadeIn } from "../ui/Animations";
 import LazyImage from "../ui/LazyImage";
 import { GridSkeleton } from "../ui/Skeleton";
 import api from "../../services/api";
-import { getImageUrl } from "../utils/media";
+import { getImageUrl } from "../../utils/media";
 
 const FeaturedPortfolio = () => {
   const [projects, setProjects] = useState([]);
@@ -45,7 +45,8 @@ const FeaturedPortfolio = () => {
                 >
                   <LazyImage
                     // src={project.coverImage}
-                    src={`${import.meta.env.VITE_API_URL}${project.coverImage}`}
+                    // src={`${import.meta.env.VITE_API_URL}${project.coverImage}`}
+                    src={getImageUrl(project.coverImage)}
                     alt={project.title}
                     className="aspect-[5/7]"
                   />

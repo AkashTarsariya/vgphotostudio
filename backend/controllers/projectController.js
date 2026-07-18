@@ -146,14 +146,26 @@ export const createProject = async (req, res) => {
       }
     }
 
+    console.log("========== CREATE PROJECT DATA ==========");
+    console.dir(data, { depth: null });
+
     const project = await Project.create(data);
 
     res.status(201).json({
       success: true,
       data: project,
     });
+    // } catch (error) {
+    //   console.error(error);
   } catch (error) {
+    console.error("========== CREATE PROJECT ERROR ==========");
     console.error(error);
+    console.error(error.stack);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
 
     res.status(500).json({
       success: false,
