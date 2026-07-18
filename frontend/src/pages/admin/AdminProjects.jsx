@@ -13,6 +13,7 @@ const AdminProjects = () => {
   const [coverPreview, setCoverPreview] = useState("");
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [deletingImage, setDeletingImage] = useState("");
   const { register, handleSubmit, reset, setValue } = useForm();
 
   const fetchData = async () => {
@@ -119,6 +120,8 @@ const AdminProjects = () => {
       setUploading(false);
     }
   };
+
+  const [deletingImage, setDeletingImage] = useState("");
 
   // const onSubmit = async (data) => {
   //   try {
@@ -228,6 +231,32 @@ const AdminProjects = () => {
     await api.delete(`/projects/${id}`);
     toast.success("Deleted");
     fetchData();
+  };
+
+  const handleGalleryDelete = async (publicId) => {
+    if (!confirm("Are you sure you want to delete this image?")) return;
+
+    try {
+      setDeletingImage(publicId);
+
+      await api.delete(`/projects/${editing}/gallery`, {
+        data: { publicId },
+      });
+
+      setGalleryPreview((prev) =>
+        prev.filter((img) => img.publicId !== publicId),
+      );
+
+      toast.success("Gallery image deleted successfully");
+    } catch (err) {
+      console.error(err);
+
+      toast.error(
+        err.response?.data?.message || "Failed to delete gallery image",
+      );
+    } finally {
+      setDeletingImage("");
+    }
   };
 
   return (
@@ -351,14 +380,53 @@ const AdminProjects = () => {
             />
 
             <div className="grid grid-cols-4 gap-2 mt-4">
-              {galleryPreview.map((img, i) => (
+              {/* {galleryPreview.map((img, i) => (
                 <img
                   key={i}
                   // src={img}
                   src={typeof img === "string" ? img : getImageUrl(img)}
                   className="w-full h-24 rounded object-cover"
                 />
-              ))}
+              ))} */}
+
+              <div className="grid grid-cols-4 gap-2 mt-4">
+                {galleryPreview.map((img, i) => (
+                  <div key={img.publicId || i} className="relative group">
+                    <img
+                      src={typeof img === "string" ? img : getImageUrl(img)}
+                      className="w-full h-24 rounded object-cover"
+                      alt=""
+                    />
+
+                    {img.publicId && (
+                      <button
+                        type="button"
+                        onClick={() => handleGalleryDelete(img.publicId)}
+                        disabled={deletingImage === img.publicId}
+                        className="
+            absolute
+            top-2
+            right-2
+            bg-red-600
+            text-white
+            rounded-full
+            p-2
+            opacity-0
+            group-hover:opacity-100
+            transition
+            disabled:opacity-60
+          "
+                      >
+                        {deletingImage === img.publicId ? (
+                          <span className="text-xs">...</span>
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <div className="flex gap-4">
