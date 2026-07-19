@@ -36,7 +36,7 @@ const Intro = () => (
           </div>
 
           <div className="description">
-            <p className="text-[17px] text-gray-500 leading-8 lg:leading-[42px] lg:text-left mb-8 lg:mb-12">
+            <p class="text-[17px] text-gray-500 lg:text-left leading-[42px] mb-12">
               Recognised for delivering premium wedding and lifestyle
               photography, VG PHOTOSTUDIO has built a reputation for capturing
               emotions with elegance, creativity, and authenticity. our journey
@@ -52,13 +52,13 @@ const Intro = () => (
               that blends emotion, artistry and cinematic elegance.
             </p> */}
 
-            <p className="text-[17px] text-gray-500 leading-8 lg:leading-[42px] lg:text-left mb-8 lg:mb-12">
+            <p class="text-[17px] text-gray-500 lg:text-left leading-[42px] mb-12">
               Our journey has given us the privilege of creating photographs
               that become treasured heirlooms crafted with intention, depth and
               heart.
             </p>
 
-            <p className="text-[17px] text-gray-500 leading-8 lg:leading-[42px] lg:text-left mb-8 lg:mb-12">
+            <p class="text-[17px] text-gray-500 lg:text-left leading-[42px] mb-12">
               We don't just document weddings. We create memories that live
               forever.
             </p>
