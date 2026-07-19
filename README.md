@@ -157,7 +157,7 @@ VITE_INSTAGRAM_URL=add_your_instagram_url
 - [x] Skeleton loaders, toast notifications
 - [x] WhatsApp floating button
 - [x] Newsletter subscription
-- [x] Recently viewed projects (localStorage)
+<!-- - [x] Recently viewed projects (localStorage) -->
 
 ## License
 
