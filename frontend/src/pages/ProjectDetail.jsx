@@ -136,7 +136,7 @@ const ProjectDetail = () => {
         </div>
         <button
           onClick={handleShare}
-          className="absolute top-32 right-8 p-3 glass text-white hover:bg-white/20 transition-colors"
+          className="absolute top-32 right-8 p-3 glass bg-[#f0eae0] text-white hover:bg-white/20 transition-colors"
           aria-label="Share"
         >
           <Share2 size={20} />
@@ -217,7 +217,7 @@ const ProjectDetail = () => {
       </section>
 
       {project.videos?.length > 0 && (
-        <section className="section-padding bg-white dark:bg-gray-900">
+        <section className="section-padding bg-[#f0eae0] dark:bg-gray-900">
           <div className="container-custom">
             <FadeIn className="mb-10">
               <span className="text-sm tracking-[0.3em] uppercase text-brand-500 block mb-3">
@@ -284,7 +284,7 @@ const ProjectDetail = () => {
         </section>
       )}
 
-      <section className="section-padding text-center bg-gray-900 dark:bg-black text-white">
+      <section className="section-padding text-center bg-[#f0eae0] dark:bg-black text-white">
         <h2 className="heading-section text-white mb-4">Love This Style?</h2>
         <p className="text-gray-400 mb-8">
           Book a similar session and let's create something extraordinary
