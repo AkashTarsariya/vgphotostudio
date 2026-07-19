@@ -4,11 +4,42 @@ import cloudinary from "../config/cloudinary.js";
 
 const storage = multer.memoryStorage();
 
+// const fileFilter = (req, file, cb) => {
+//   if (file.mimetype.startsWith("image/")) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error("Only image files are allowed"), false);
+//   }
+// };
+
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
+  const allowedImageTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/avif",
+  ];
+
+  const allowedVideoTypes = [
+    "video/mp4",
+    "video/quicktime", // .mov
+    "video/webm",
+  ];
+
+  if (
+    allowedImageTypes.includes(file.mimetype) ||
+    allowedVideoTypes.includes(file.mimetype)
+  ) {
     cb(null, true);
   } else {
-    cb(new Error("Only image files are allowed"), false);
+    cb(
+      new Error(
+        "Only JPG, PNG, WEBP, AVIF images and MP4, MOV, WEBM videos are allowed.",
+      ),
+      false,
+    );
   }
 };
 
@@ -20,23 +51,94 @@ export const upload = multer({
 
 // const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
 // export const uploadToCloudinary = (buffer, folder = "vg-photostudio") =>
+// export const uploadToCloudinary = (
+//   buffer,
+//   folder = "vg-photostudio",
+//   resourceType = "image",
+// ) =>
+//   new Promise((resolve, reject) => {
+//     const uploadStream = cloudinary.uploader.upload_stream(
+//       {
+//         folder,
+//         resource_type: "image",
+//         transformation: [{ quality: "auto", fetch_format: "auto" }],
+//       },
+//       (error, result) => {
+//         if (error) reject(error);
+//         else resolve(result);
+//       },
+//     );
+//     Readable.from(buffer).pipe(uploadStream);
+//   });
+
+// export const uploadToCloudinary = (
+//   buffer,
+//   folder = "vg-photostudio",
+//   resourceType = "image",
+// ) =>
+//   new Promise((resolve, reject) => {
+//     const options = {
+//       folder,
+//       resource_type: resourceType,
+//     };
+
+//     // Image optimization only for images
+//     if (resourceType === "image") {
+//       options.transformation = [
+//         {
+//           quality: "auto",
+//           fetch_format: "auto",
+//         },
+//       ];
+//     }
+
+//     const uploadStream = cloudinary.uploader.upload_stream(
+//       options,
+//       (error, result) => {
+//         if (error) {
+//           console.error("Cloudinary Upload Error:", error);
+//           reject(error);
+//         } else {
+//           resolve(result);
+//         }
+//       },
+//     );
+
+//     Readable.from(buffer).pipe(uploadStream);
+//   });
+
 export const uploadToCloudinary = (
   buffer,
   folder = "vg-photostudio",
   resourceType = "image",
 ) =>
   new Promise((resolve, reject) => {
+    const options = {
+      folder,
+      resource_type: resourceType,
+    };
+
+    if (resourceType === "image") {
+      options.transformation = [
+        {
+          quality: "auto",
+          fetch_format: "auto",
+        },
+      ];
+    }
+
     const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: "image",
-        transformation: [{ quality: "auto", fetch_format: "auto" }],
-      },
+      options,
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          reject(error);
+        } else {
+          resolve(result);
+        }
       },
     );
+
     Readable.from(buffer).pipe(uploadStream);
   });
 
