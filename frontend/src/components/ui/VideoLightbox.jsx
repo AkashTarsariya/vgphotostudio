@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 // import { X } from "lucide-react";
 import {
   X,
@@ -39,20 +39,32 @@ const VideoLightbox = ({ videos, currentIndex, setCurrentIndex, onClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        onClose();
+      switch (e.key) {
+        case "Escape":
+          onClose();
+          break;
+
+        case "ArrowRight":
+          goNext();
+          break;
+
+        case "ArrowLeft":
+          goPrev();
+          break;
+
+        default:
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-
     document.body.style.overflow = "hidden";
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "auto";
     };
-  }, [onClose]);
+  }, [goNext, goPrev, onClose]);
 
   //   if (!video) return null;
   //   const video = videos[currentIndex];
