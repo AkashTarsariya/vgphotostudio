@@ -15,9 +15,15 @@ const VideoLightbox = ({ videos, currentIndex, setCurrentIndex, onClose }) => {
 
   const videoRef = useRef(null);
 
+  if (!videos?.length) return null;
+
   const video = videos[currentIndex];
 
   if (!video) return null;
+
+  //   const video = videos[currentIndex];
+
+  //   if (!video) return null;
 
   const goNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % videos.length);
@@ -27,44 +33,64 @@ const VideoLightbox = ({ videos, currentIndex, setCurrentIndex, onClose }) => {
     setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
   }, [videos.length, setCurrentIndex]);
 
-  const toggleFullscreen = async () => {
-    if (!videoRef.current) return;
+  //   const toggleFullscreen = async () => {
+  //     if (!videoRef.current) return;
 
-    if (!document.fullscreenElement) {
-      await videoRef.current.requestFullscreen();
-    } else {
-      await document.exitFullscreen();
+  //     if (!document.fullscreenElement) {
+  //       await videoRef.current.requestFullscreen();
+  //     } else {
+  //       await document.exitFullscreen();
+  //     }
+  //   };
+
+  const toggleFullscreen = async () => {
+    const element = videoRef.current;
+
+    if (!element) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await element.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Fullscreen failed:", err);
     }
   };
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      switch (e.key) {
-        case "Escape":
-          onClose();
-          break;
+    setRotation(0);
+  }, [currentIndex]);
 
-        case "ArrowRight":
-          goNext();
-          break;
+  //   useEffect(() => {
+  //     const handleKeyDown = (e) => {
+  //       switch (e.key) {
+  //         case "Escape":
+  //           onClose();
+  //           break;
 
-        case "ArrowLeft":
-          goPrev();
-          break;
+  //         case "ArrowRight":
+  //           goNext();
+  //           break;
 
-        default:
-          break;
-      }
-    };
+  //         case "ArrowLeft":
+  //           goPrev();
+  //           break;
 
-    window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
+  //         default:
+  //           break;
+  //       }
+  //     };
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "auto";
-    };
-  }, [goNext, goPrev, onClose]);
+  //     window.addEventListener("keydown", handleKeyDown);
+  //     document.body.style.overflow = "hidden";
+
+  //     return () => {
+  //       window.removeEventListener("keydown", handleKeyDown);
+  //       document.body.style.overflow = "auto";
+  //     };
+  //   }, [goNext, goPrev, onClose]);
 
   //   if (!video) return null;
   //   const video = videos[currentIndex];
@@ -106,6 +132,7 @@ const VideoLightbox = ({ videos, currentIndex, setCurrentIndex, onClose }) => {
 
         {/* Video */}
         <video
+          key={video.publicId}
           ref={videoRef}
           src={video.url}
           controls

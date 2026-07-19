@@ -1,5 +1,6 @@
 // import { useState, useEffect } from "react";
-import { useEffect, useState, useCallback, useRef } from "react";
+// import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Calendar, Camera, ArrowLeft, Share2 } from "lucide-react";
