@@ -23,33 +23,23 @@ const ProjectDetail = () => {
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      switch (e.key) {
-        case "Escape":
-          onClose();
-          break;
+    api
+      .get(`/projects/slug/${slug}`)
+      .then(({ data }) => {
+        setProject(data.data);
 
-        case "ArrowRight":
-          goNext();
-          break;
+        const viewed = JSON.parse(localStorage.getItem("vg_recent") || "[]");
 
-        case "ArrowLeft":
-          goPrev();
-          break;
+        const updated = [
+          data.data._id,
+          ...viewed.filter((id) => id !== data.data._id),
+        ].slice(0, 6);
 
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "auto";
-    };
-  }, [goNext, goPrev, onClose]);
+        localStorage.setItem("vg_recent", JSON.stringify(updated));
+      })
+      .catch(() => setProject(null))
+      .finally(() => setLoading(false));
+  }, [slug]);
 
   const handleShare = async () => {
     if (navigator.share) {
