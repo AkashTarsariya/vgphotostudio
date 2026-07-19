@@ -62,9 +62,13 @@
     @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-gray-900 dark:border-white text-gray-900 dark:text-white font-medium tracking-wide transition-all duration-300 hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900;
   }
 
-  .section-padding {
+  /* .section-padding {
     @apply px-4 sm:px-6 lg:px-8 pt-5 pb-2 py-20 md:py-28;
-  }
+  } */
+
+    .section-padding {
+      @apply px-4 sm:px-6 lg:px-8 py-12 md:py-16;
+    }
 
   .container-custom {
     @apply max-w-7xl mx-auto;

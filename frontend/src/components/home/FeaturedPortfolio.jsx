@@ -22,7 +22,7 @@ const FeaturedPortfolio = () => {
     // <section className="section-padding bg-gray-50 dark:bg-gray-950">
     <section className="section-padding bg-[#f0eae0] dark:bg-[#f0eae0]">
       <div className="container-custom">
-        <FadeIn className="text-center mb-16">
+        <FadeIn className="text-center mb-10">
           <span className="text-sm tracking-[0.3em] uppercase text-brand-500 mb-4 block">
             Selected Works
           </span>
@@ -108,7 +108,7 @@ const FeaturedPortfolio = () => {
           </div>
         )}
 
-        <FadeIn className="text-center mt-12">
+        <FadeIn className="text-center mt-8">
           <Link to="/portfolio" className="btn-outline">
             View All Work
           </Link>

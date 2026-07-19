@@ -153,7 +153,7 @@ const ProjectDetail = () => {
           </FadeIn>
 
           {project.equipment?.camera && (
-            <FadeIn className="mt-12 p-6 border border-gray-200 dark:border-gray-800">
+            <FadeIn className="mt-8 p-6 border border-gray-200 dark:border-gray-800">
               <div className="flex items-center gap-3 mb-4">
                 <Camera size={20} className="text-brand-500" />
                 <h3 className="font-display text-xl">Equipment</h3>
@@ -186,7 +186,7 @@ const ProjectDetail = () => {
           )}
 
           {project.testimonial?.content && (
-            <FadeIn className="mt-12 p-8 bg-gray-50 dark:bg-gray-900 italic text-center">
+            <FadeIn className="mt-8 p-8 bg-gray-50 dark:bg-gray-900 italic text-center">
               <p className="text-lg mb-4">"{project.testimonial.content}"</p>
               <p className="text-sm text-muted">
                 — {project.testimonial.clientName}
@@ -198,7 +198,7 @@ const ProjectDetail = () => {
 
       <section className="section-padding bg-[#f0eae0] dark:bg-gray-950">
         <div className="container-custom">
-          <FadeIn className="mb-10">
+          <FadeIn className="mb-6">
             <h2 className="heading-section">Gallery</h2>
           </FadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -219,7 +219,7 @@ const ProjectDetail = () => {
       {project.videos?.length > 0 && (
         <section className="section-padding bg-[#f0eae0] dark:bg-gray-900">
           <div className="container-custom">
-            <FadeIn className="mb-10">
+            <FadeIn className="mb-6">
               <span className="text-sm tracking-[0.3em] uppercase text-brand-500 block mb-3">
                 Cinematic Moments
               </span>

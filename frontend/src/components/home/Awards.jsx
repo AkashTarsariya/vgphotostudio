@@ -12,12 +12,12 @@ const awards = [
 const Awards = () => (
   <section className="section-padding">
     <div className="container-custom">
-      <FadeIn className="text-center mb-16">
+      <FadeIn className="text-center mb-10">
         <span className="text-sm tracking-[0.3em] uppercase text-brand-500 mb-4 block">Recognition</span>
         <h2 className="heading-section mb-4">Awards & Accolades</h2>
       </FadeIn>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {awards.map((award, i) => (
           <FadeIn key={award.title} delay={i}>
             <div className="text-center p-6 border border-gray-200 dark:border-gray-800 hover:border-brand-500/30 transition-colors">

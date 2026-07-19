@@ -86,7 +86,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
+          {/* <button
             onClick={toggleTheme}
             // className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             className={`p-2 rounded-full transition-colors ${
@@ -97,7 +97,7 @@ const Navbar = () => {
             aria-label="Toggle theme"
           >
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          </button> */}
 
           {/* <Link
             to="/book"
