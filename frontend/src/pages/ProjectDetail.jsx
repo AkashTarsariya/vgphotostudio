@@ -216,6 +216,45 @@ const ProjectDetail = () => {
         </div>
       </section>
 
+      {project.videos?.length > 0 && (
+        <section className="section-padding bg-white dark:bg-gray-900">
+          <div className="container-custom">
+            <FadeIn className="mb-10">
+              <span className="text-sm tracking-[0.3em] uppercase text-brand-500 block mb-3">
+                Cinematic Moments
+              </span>
+
+              <h2 className="heading-section">Videos</h2>
+
+              <p className="text-muted mt-3 max-w-2xl">
+                Watch cinematic highlights and memorable moments from this
+                shoot.
+              </p>
+            </FadeIn>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {project.videos.map((video) => (
+                <FadeIn key={video.publicId}>
+                  <div className="overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 bg-black">
+                    <video
+                      controls
+                      preload="metadata"
+                      className="w-full aspect-video"
+                    >
+                      <source
+                        src={video.url}
+                        type={`video/${video.format || "mp4"}`}
+                      />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {project.relatedProjects?.length > 0 && (
         <section className="section-padding">
           <div className="container-custom">
