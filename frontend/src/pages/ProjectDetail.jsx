@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Calendar, Camera, ArrowLeft, Share2 } from "lucide-react";
@@ -8,6 +9,7 @@ import LazyImage from "../components/ui/LazyImage";
 import Lightbox from "../components/ui/Lightbox";
 import { GridSkeleton } from "../components/ui/Skeleton";
 import api from "../services/api";
+import VideoLightbox from "../components/ui/VideoLightbox";
 
 // const API_URL = "http://localhost:5000";
 const API_URL = "https://vg-photostudio-api.onrender.com";
@@ -17,22 +19,36 @@ const ProjectDetail = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
 
   useEffect(() => {
-    api
-      .get(`/projects/slug/${slug}`)
-      .then(({ data }) => {
-        setProject(data.data);
-        const viewed = JSON.parse(localStorage.getItem("vg_recent") || "[]");
-        const updated = [
-          data.data._id,
-          ...viewed.filter((id) => id !== data.data._id),
-        ].slice(0, 6);
-        localStorage.setItem("vg_recent", JSON.stringify(updated));
-      })
-      .catch(() => setProject(null))
-      .finally(() => setLoading(false));
-  }, [slug]);
+    const handleKeyDown = (e) => {
+      switch (e.key) {
+        case "Escape":
+          onClose();
+          break;
+
+        case "ArrowRight":
+          goNext();
+          break;
+
+        case "ArrowLeft":
+          goPrev();
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "auto";
+    };
+  }, [goNext, goPrev, onClose]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -233,9 +249,10 @@ const ProjectDetail = () => {
             </FadeIn>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {project.videos.map((video) => (
+              {/* {project.videos.map((video) => ( */}
+              {project.videos.map((video, index) => (
                 <FadeIn key={video.publicId}>
-                  <div className="overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 bg-black">
+                  {/* <div className="overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 bg-black">
                     <video
                       controls
                       preload="metadata"
@@ -247,6 +264,36 @@ const ProjectDetail = () => {
                       />
                       Your browser does not support the video tag.
                     </video>
+                  </div> */}
+
+                  <div
+                    // onClick={() => setSelectedVideo(video)}
+                    onClick={() => setSelectedVideoIndex(index)}
+                    className="overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-800 bg-black cursor-pointer group relative"
+                  >
+                    <video
+                      preload="metadata"
+                      muted
+                      className="w-full aspect-video pointer-events-none"
+                    >
+                      <source
+                        src={video.url}
+                        type={`video/${video.format || "mp4"}`}
+                      />
+                    </video>
+
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition">
+                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                          className="w-6 h-6 ml-1 text-black"
+                        >
+                          <path d="M11.596 8.697L6.233 11.98A.5.5 0 0 1 5.5 11.55V4.45a.5.5 0 0 1 .733-.43l5.363 3.283a.5.5 0 0 1 0 .854z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </FadeIn>
               ))}
@@ -312,6 +359,21 @@ const ProjectDetail = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* {selectedVideo && (
+        <VideoLightbox
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+        />
+      )} */}
+      {selectedVideoIndex !== null && (
+        <VideoLightbox
+          videos={project.videos}
+          currentIndex={selectedVideoIndex}
+          setCurrentIndex={setSelectedVideoIndex}
+          onClose={() => setSelectedVideoIndex(null)}
+        />
+      )}
     </>
   );
 };
