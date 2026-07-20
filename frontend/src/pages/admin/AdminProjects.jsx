@@ -13,6 +13,10 @@ const AdminProjects = () => {
   const [coverPreview, setCoverPreview] = useState("");
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [videoPreview, setVideoPreview] = useState([]);
+  const [coverPosition, setCoverPosition] = useState({
+    x: 50,
+    y: 50,
+  });
   const [uploading, setUploading] = useState(false);
   const [deletingImage, setDeletingImage] = useState("");
   const [deletingVideo, setDeletingVideo] = useState("");
@@ -75,6 +79,7 @@ const AdminProjects = () => {
       formData.append("shootDate", data.shootDate);
       formData.append("isPublished", data.isPublished);
       formData.append("isFeatured", data.isFeatured);
+      formData.append("coverPosition", JSON.stringify(coverPosition));
 
       // Cover Image
       if (data.coverImage?.[0]) {
@@ -225,6 +230,11 @@ const AdminProjects = () => {
       // Existing Cover Preview
       setCoverPreview(getImageUrl(fullProject.coverImage));
 
+      setCoverPosition({
+        x: fullProject.coverImage?.position?.x ?? 50,
+        y: fullProject.coverImage?.position?.y ?? 50,
+      });
+
       // Existing Gallery Preview
       setGalleryPreview(fullProject.gallery || []);
 
@@ -345,16 +355,76 @@ const AdminProjects = () => {
 
                   if (file) {
                     setCoverPreview(URL.createObjectURL(file));
+
+                    setCoverPosition({
+                      x: 50,
+                      y: 50,
+                    });
                   }
                 }}
                 {...register("coverImage")}
               />
 
-              {coverPreview && (
+              {/* {coverPreview && (
                 <img
                   src={coverPreview}
                   className="mt-3 h-40 rounded-lg object-cover"
                 />
+              )} */}
+
+              {coverPreview && (
+                <div className="mt-4 space-y-4">
+                  <div className="relative w-full h-64 overflow-hidden rounded-xl border bg-gray-100">
+                    <img
+                      src={coverPreview}
+                      alt="Cover Preview"
+                      className="w-full h-full object-cover transition-all duration-200"
+                      style={{
+                        objectPosition: `${coverPosition.x}% ${coverPosition.y}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Horizontal Position ({coverPosition.x}%)
+                    </label>
+
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={coverPosition.x}
+                      onChange={(e) =>
+                        setCoverPosition((prev) => ({
+                          ...prev,
+                          x: Number(e.target.value),
+                        }))
+                      }
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Vertical Position ({coverPosition.y}%)
+                    </label>
+
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={coverPosition.y}
+                      onChange={(e) =>
+                        setCoverPosition((prev) => ({
+                          ...prev,
+                          y: Number(e.target.value),
+                        }))
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                </div>
               )}
             </div>
 

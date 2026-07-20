@@ -101,6 +101,14 @@ export const createProject = async (req, res) => {
   try {
     const data = { ...req.body };
 
+    if (req.body.coverPosition) {
+      try {
+        data.coverPosition = JSON.parse(req.body.coverPosition);
+      } catch (err) {
+        console.error("Invalid coverPosition:", err);
+      }
+    }
+
     if (!data.slug) {
       data.slug = slugify(data.title);
     }
@@ -118,6 +126,11 @@ export const createProject = async (req, res) => {
       data.coverImage = {
         url: coverUpload.secure_url,
         publicId: coverUpload.public_id,
+
+        position: data.coverPosition || {
+          x: 50,
+          y: 50,
+        },
       };
     }
 
@@ -166,9 +179,6 @@ export const createProject = async (req, res) => {
       }
     }
 
-    console.log("========== CREATE PROJECT DATA ==========");
-    console.dir(data, { depth: null });
-
     const project = await Project.create(data);
 
     res.status(201).json({
@@ -178,10 +188,6 @@ export const createProject = async (req, res) => {
     // } catch (error) {
     //   console.error(error);
   } catch (error) {
-    console.error("========== CREATE PROJECT ERROR ==========");
-    console.error(error);
-    console.error(error.stack);
-
     res.status(500).json({
       success: false,
       message: error.message,
@@ -212,6 +218,14 @@ export const createProject = async (req, res) => {
 export const updateProject = async (req, res) => {
   try {
     const data = { ...req.body };
+
+    if (req.body.coverPosition) {
+      try {
+        data.coverPosition = JSON.parse(req.body.coverPosition);
+      } catch (err) {
+        console.error("Invalid coverPosition:", err);
+      }
+    }
 
     if (data.title && !data.slug) {
       data.slug = slugify(data.title);
@@ -275,10 +289,22 @@ export const updateProject = async (req, res) => {
       data.coverImage = {
         url: coverUpload.secure_url,
         publicId: coverUpload.public_id,
+
+        position: data.coverPosition || {
+          x: 50,
+          y: 50,
+        },
       };
     } else {
-      data.coverImage = project.coverImage;
+      data.coverImage = {
+        ...project.coverImage,
+
+        position: data.coverPosition || project.coverImage.position,
+      };
     }
+    // } else {
+    //   data.coverImage = project.coverImage;
+    // }
 
     // Upload new gallery images if selected
     // if (req.files?.gallery?.length > 0) {

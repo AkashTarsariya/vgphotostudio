@@ -14,6 +14,17 @@ const projectSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+
+      position: {
+        x: {
+          type: Number,
+          default: 50,
+        },
+        y: {
+          type: Number,
+          default: 50,
+        },
+      },
     },
     story: { type: String, required: true },
     category: {
